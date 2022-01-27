@@ -39,6 +39,7 @@ public class MybatisTest {
     public void test() {
         try(SqlSession session = buildSqlSessionFactory().openSession()) {
             PersonMapper personMapper = session.getMapper(PersonMapper.class);
+            personMapper.createTable();
             personMapper.save(Person.builder().id(1L).name("1").build());
             Person person = personMapper.getPersonById(1);
             System.out.println(person);

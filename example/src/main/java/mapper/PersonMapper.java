@@ -25,6 +25,9 @@ import org.apache.ibatis.annotations.*;
  */
 public interface PersonMapper {
 
+    @Insert("create table person(id int not null, name varchar(255))")
+    Integer createTable();
+
     @Insert("Insert into person(id, name) values (#{id}, #{name})")
     Integer save(Person person);
 

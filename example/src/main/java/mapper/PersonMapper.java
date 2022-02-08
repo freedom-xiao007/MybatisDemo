@@ -20,6 +20,7 @@ package mapper;
 import entity.Person;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,12 +48,12 @@ public interface PersonMapper {
     })
     Person getPersonByCondition(@Param("id") Integer id, @Param("name") String name);
 
-    @Select("Select id, name from Person where id=#{id} and name=#{name}")
+    @Select("Select * from Person where id=#{id} or name=#{name}")
     @Results(value = {
             @Result(property = "id", column = "id"),
             @Result(property="name", column = "name"),
     })
-    Person getPersonByMap(Map<String, Object> query);
+    List<Person> getPersonByMap(Map<String, Object> query);
 
     @Select("Select id, name from Person where id=#{id} and name=#{person.name}")
     @Results(value = {

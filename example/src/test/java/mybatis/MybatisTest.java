@@ -42,17 +42,18 @@ public class MybatisTest {
         try(SqlSession session = buildSqlSessionFactory().openSession()) {
             PersonMapper personMapper = session.getMapper(PersonMapper.class);
             personMapper.createTable();
-//            personMapper.save(Person.builder().id(1L).name("1").build());
+            personMapper.save(Person.builder().id(1L).name("1").build());
+            personMapper.save(Person.builder().id(2L).name("1").build());
 //            Person person = personMapper.getPersonById(1);
 //            System.out.println(person);
 //            System.out.println(personMapper.getPersonByCondition(1, "1"));
-//
-//            Map<String, Object> query = new HashMap<>(2);
-//            query.put("id", 1);
-//            query.put("name", "name");
-//            System.out.println(personMapper.getPersonByMap(query));
 
-            System.out.println(personMapper.getPersonByMul(Person.builder().name("1").build(), 1));
+            Map<String, Object> query = new HashMap<>(2);
+            query.put("id", 1);
+            query.put("name", "1");
+            System.out.println(personMapper.getPersonByMap(query));
+
+//            System.out.println(personMapper.getPersonByMul(Person.builder().name("1").build(), 1));
         }
     }
 

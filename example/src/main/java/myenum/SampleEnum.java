@@ -1,4 +1,4 @@
-/*
+package myenum;/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -15,22 +15,15 @@
  * limitations under the License.
  */
 
-package entity;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * @author liuwei
  */
-@Builder
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Person {
+public enum SampleEnum {
+    VALUE_ONE("O"), VALUE_TWO("T");
 
-    private Long id;
-    private String[] name;
+    String dbCode;
+
+    SampleEnum(String dbCode){
+        this.dbCode = dbCode;
+    }
 }

@@ -17,9 +17,6 @@
 
 package self;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.lang.reflect.Method;
 import java.sql.*;
 
 /**
@@ -27,12 +24,8 @@ import java.sql.*;
  */
 public class StatementHandler {
 
-    public ResultSet prepare(Connection conn, Object proxy, Method method, Object[] args, SelfConfiguration config) throws SQLException {
-        final String classPath = method.getDeclaringClass().getPackageName();
-        final String className = method.getDeclaringClass().getName();
-        final String methodName = method.getName();
-        final String id = StringUtils.joinWith(".", classPath, className, methodName);
-        final SqlSource sqlSource = config.getSqlSource(id);
+    public ResultSet prepare(String methodId, Connection conn, Object[] args, SelfConfiguration config) throws SQLException {
+        final SqlSource sqlSource = config.getSqlSource(methodId);
         if (sqlSource.getType().equals(SqlType.SELECT)) {
             return select(conn, sqlSource);
         }

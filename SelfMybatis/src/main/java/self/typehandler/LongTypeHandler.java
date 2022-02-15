@@ -15,22 +15,24 @@
  * limitations under the License.
  */
 
-package mapper;
+package self.typehandler;
 
-import entity.Person;
-import self.annotation.Insert;
-import self.annotation.Select;
-
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author liuwei
  */
-public interface PersonMapper {
+public class LongTypeHandler implements TypeHandler {
 
-    @Select("select * from person")
-    List<Person> list();
+    private static LongTypeHandler instance = new LongTypeHandler();
 
-    @Insert("insert into person (id, name) values ('1', '1')")
-    void save();
+    public static LongTypeHandler getInstance() {
+        return instance;
+    }
+
+    @Override
+    public Object getResult(ResultSet res, String cluName) throws SQLException {
+        return res.getLong(cluName);
+    }
 }

@@ -15,22 +15,21 @@
  * limitations under the License.
  */
 
-package mapper;
+package self;
 
-import entity.Person;
-import self.annotation.Insert;
-import self.annotation.Select;
+import lombok.Builder;
+import lombok.Data;
+import self.typehandler.TypeHandler;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author liuwei
  */
-public interface PersonMapper {
+@Builder
+@Data
+public class ResultMap {
 
-    @Select("select * from person")
-    List<Person> list();
-
-    @Insert("insert into person (id, name) values ('1', '1')")
-    void save();
+    private Object returnType;
+    private Map<String,TypeHandler> typeHandlerMaps;
 }

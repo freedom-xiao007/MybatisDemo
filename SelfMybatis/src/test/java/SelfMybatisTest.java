@@ -17,6 +17,7 @@
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import entity.Person;
 import mapper.PersonMapper;
 import org.junit.jupiter.api.Test;
 import self.SelfConfiguration;
@@ -34,9 +35,8 @@ public class SelfMybatisTest {
     public void test() {
         try(SelfSqlSession session = buildSqlSessionFactory()) {
             PersonMapper personMapper = session.getMapper(PersonMapper.class);
-            personMapper.createTable();
             personMapper.save();
-            List<Object> personList = personMapper.list();
+            List<Person> personList = personMapper.list();
             for (Object person: personList) {
                 System.out.println(person.toString());
             }
@@ -45,7 +45,7 @@ public class SelfMybatisTest {
 
     public static SelfSqlSession buildSqlSessionFactory() {
         String JDBC_DRIVER = "org.h2.Driver";
-        String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+        String DB_URL = "jdbc:h2:file:./testDb";
         String USER = "sa";
         String PASS = "";
 

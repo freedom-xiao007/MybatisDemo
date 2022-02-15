@@ -17,8 +17,12 @@
 
 package self;
 
+import self.typehandler.TypeHandler;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,20 +32,24 @@ import java.util.List;
  */
 public class ResultHandler {
 
-    public List<Object> parse(ResultSet res) throws SQLException {
+    public List<Object> parse(String id, ResultSet res, SelfConfiguration config) throws SQLException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (res == null) {
             return null;
         }
 
+        ResultMap resultMap = config.getResultType(id);
+
         final List<Object> list = new ArrayList<>(res.getFetchSize());
-        final ResultSetMetaData metaData = res.getMetaData();
         while (res.next()) {
-            final int count =metaData.getColumnCount();
-            final List<Object> val = new ArrayList<>(count);
-            for (int i=1; i <= count; i++) {
-                final String name = metaData.getColumnName(i);
-                final Object value = res.getObject(name);
-                val.add(value);
+            Class<?> returnType = (Class<?>) resultMap.getReturnType();
+            Object val = returnType.getDeclaredConstructor().newInstance();
+            for (Field field: returnType.getDeclaredFields()) {
+                final String name = field.getName();
+                TypeHandler typeHandler = resultMap.getTypeHandlerMaps().get(field.getType().getName());
+                Object value = typeHandler.getResult(res, name);
+                String methodEnd = name.substring(0, 1).toUpperCase() + name.substring(1);
+                Method setMethod = val.getClass().getDeclaredMethod("set" + methodEnd, field.getType());
+                setMethod.invoke(val, value);
             }
             list.add(val);
         }

@@ -62,7 +62,7 @@ public class MybatisTest {
 
     public static SqlSessionFactory buildSqlSessionFactory() {
         String JDBC_DRIVER = "org.h2.Driver";
-        String DB_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+        String DB_URL = "jdbc:h2:file:./testDb";
         String USER = "sa";
         String PASS = "";
         DataSource dataSource = new PooledDataSource(JDBC_DRIVER, DB_URL, USER, PASS);

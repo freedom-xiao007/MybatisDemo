@@ -15,22 +15,15 @@
  * limitations under the License.
  */
 
-package mapper;
+package self.typehandler;
 
-import entity.Person;
-import self.annotation.Insert;
-import self.annotation.Select;
-
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author liuwei
  */
-public interface PersonMapper {
+public interface TypeHandler {
 
-    @Select("select * from person")
-    List<Person> list();
-
-    @Insert("insert into person (id, name) values ('1', '1')")
-    void save();
+    Object getResult(ResultSet res, String cluName) throws SQLException;
 }

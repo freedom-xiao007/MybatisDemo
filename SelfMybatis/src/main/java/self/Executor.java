@@ -17,6 +17,9 @@
 
 package self;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,11 +33,15 @@ public class Executor {
     private static final StatementHandler statementHandler = new StatementHandler();
     private static final ResultHandler resultHandler = new ResultHandler();
 
-    public static Object executor(SelfConfiguration config, Object proxy, Method method, Object[] args) throws SQLException {
+    public static Object executor(SelfConfiguration config, Object proxy, Method method, Object[] args) throws SQLException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         System.out.println("executor");
         try (Connection conn = config.getDataSource().getConnection()) {
-            ResultSet resultSet = statementHandler.prepare(conn, proxy, method, args, config);
-            return resultHandler.parse(resultSet);
+            final String classPath = method.getDeclaringClass().getPackageName();
+            final String className = method.getDeclaringClass().getName();
+            final String methodName = method.getName();
+            final String id = StringUtils.joinWith(".", classPath, className, methodName);
+            ResultSet resultSet = statementHandler.prepare(id, conn, args, config);
+            return resultHandler.parse(id, resultSet, config);
         }
     }
 }

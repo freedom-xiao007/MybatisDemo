@@ -117,3 +117,6 @@ fabric.properties
 *.iml
 out
 gen
+
+testDb.mv.db
+testDb.trace.db

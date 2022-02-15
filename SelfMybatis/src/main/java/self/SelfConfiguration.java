@@ -64,6 +64,11 @@ public class SelfConfiguration {
         typeHandlerMap.put(Long.class, intType);
     }
 
+    /**
+     * 读取数据库中的所有表
+     * 获取其字段对应的类型
+     * @throws SQLException e
+     */
     private void initJdbcTypeCache() throws SQLException {
         try (Connection conn = dataSource.getConnection()){
             final DatabaseMetaData dbMetaData = conn.getMetaData();
@@ -113,16 +118,25 @@ public class SelfConfiguration {
                 }
             }
 
+            // 构建接口函数方法返回值处理
             addResultMap(id, method);
         }
 
     }
 
+    /**
+     * 构建接口函数方法返回值处理
+     * @param id 接口函数 id
+     * @param method 接口函数方法
+     */
     private void addResultMap(String id, Method method) {
+        // 空直接发返回
         if (method.getReturnType().getName().equals("void")) {
             return;
         }
 
+        // 获取返回对象类型
+        // 这里需要特殊处理下，如果是List的话，需要特殊处理得到List里面的对象
         Type type = method.getGenericReturnType();
         Type returnType;
         if (type instanceof ParameterizedType) {
@@ -130,19 +144,27 @@ public class SelfConfiguration {
         } else {
             returnType = method.getReturnType();
         }
+        // 接口方法id作为key，值为 接口方法返回对象类型和其中每个字段对应处理的TypeHandler映射
         resultMapCache.put(id, ResultMap.builder()
                 .returnType(returnType)
                 .typeHandlerMaps(buildTypeHandlerMaps((Class<?>) returnType))
                 .build());
     }
 
+    /**
+     * 构建实体类的每个字段对应处理的TypeHandler映射
+     * @param returnType 接口函数返回对象类型
+     * @return TypeHandler映射
+     */
     private Map<String, TypeHandler> buildTypeHandlerMaps(Class<?> returnType) {
+        // 这里默认取类名的小写为对应的数据库表名，当然也可以使用@TableName之类的注解
         final String tableName = StringUtils.substringAfterLast(returnType.getTypeName(), ".").toLowerCase();
         final Map<String, TypeHandler> typeHandler = new HashMap<>(returnType.getDeclaredFields().length);
         for (Field field : returnType.getDeclaredFields()) {
             final String javaType = field.getType().getName();
             final String name = field.getName();
             final Integer jdbcType = jdbcTypeCache.get(tableName).get(name);
+            // 根据JavaType和jdbcType得到对应的TypeHandler
             typeHandler.put(javaType, typeHandlerMap.get(field.getType()).get(jdbcType));
         }
         return typeHandler;

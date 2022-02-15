@@ -37,16 +37,21 @@ public class ResultHandler {
             return null;
         }
 
+        // 根据接口函数Id得到初始化时国家队ResultMap
         ResultMap resultMap = config.getResultType(id);
 
         final List<Object> list = new ArrayList<>(res.getFetchSize());
         while (res.next()) {
+            // 根据接口函数返回类型，生成一个实例
             Class<?> returnType = (Class<?>) resultMap.getReturnType();
             Object val = returnType.getDeclaredConstructor().newInstance();
+
             for (Field field: returnType.getDeclaredFields()) {
                 final String name = field.getName();
+                // 根据返回对象的字段类型，得到对应的TypeHandler,调用TypeHandler处理得到结果
                 TypeHandler typeHandler = resultMap.getTypeHandlerMaps().get(field.getType().getName());
                 Object value = typeHandler.getResult(res, name);
+                // 调用对象的Set方法
                 String methodEnd = name.substring(0, 1).toUpperCase() + name.substring(1);
                 Method setMethod = val.getClass().getDeclaredMethod("set" + methodEnd, field.getType());
                 setMethod.invoke(val, value);
